@@ -1,0 +1,6 @@
+# Python venv
+/venv
+
+# Build output
+/build
+/CMakeUserPresets.json
