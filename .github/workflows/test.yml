@@ -18,13 +18,13 @@ jobs:
       with:
         python-version: '3.11' 
     - name: Install requirements
-      working-directory: $libaaa/test
+      working-directory: libaaa/test
       run: pip install -r ./requirements.txt
     - name: Build application
-      working-directory: $/libaaa/test
+      working-directory: libaaa/test
       run: python ./build.py
     - name: Run Unittest
-      working-directory: $/libaaa/test/build
+      working-directory: libaaa/test/build
       run: ./libaaa_test
      
  #  test_windows:
