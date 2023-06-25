@@ -25,11 +25,29 @@ jobs:
     - name: Build application
       working-directory: libaaa/test
       run: python ./build.py
-    - name: Run Unittest
+    - name: Run Unit test
       working-directory: libaaa/test/build
       run: ./libaaa_test
      
- #  test_windows:
- #    name: Unit Test (Linux)
- #    needs: test_linux
- 
+  test_windows:
+    name: Unit Test (Windows)
+    runs-on: windows-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Install python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11' 
+    - name: Install requirements
+      working-directory: libaaa/test
+      run: pip install -r ./requirements.txt
+    - name: Setup conan
+      run: conan profile detect
+    - name: Build application
+      working-directory: libaaa/test
+      run: python ./build.py
+    - name: Run Unit test
+      working-directory: libaaa/test/build/Release
+      run: libaaa_test
+    
