@@ -20,7 +20,9 @@ docs_dir: docs
 # Navigation
 nav:
   - About: "index.md"
-  - LibAAA: "libaaa/index.md"
+  - LibAAA: 
+    - About: "libaaa/index.md"
+    - Reference: "libaaa/reference.md"
   - LibAAA-Server: "libaaa-server/index.md"
   - LibAAA-Client: "libaaa-client/index.md"
 
@@ -53,7 +55,6 @@ markdown_extensions:
       emoji_generator: !!python/name:materialx.emoji.to_svg
   # Annotations
   - md_in_html
-
 
 # Visual customisation
 theme:
