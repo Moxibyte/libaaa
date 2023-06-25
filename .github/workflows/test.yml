@@ -20,6 +20,8 @@ jobs:
     - name: Install requirements
       working-directory: libaaa/test
       run: pip install -r ./requirements.txt
+    - name: Setup conan
+      run: conan profile detect
     - name: Build application
       working-directory: libaaa/test
       run: python ./build.py
