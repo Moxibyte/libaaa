@@ -51,20 +51,9 @@ TEST_F(pg_attribute, type_time)
         0x39, 0x1A, 0x95, 0x8C, // VALUE
     };
 
-    // Generate time
-    std::tm tm{};
-    tm.tm_year = 2000-1900; // 2000
-    tm.tm_mon = 5-1;        // MAY
-    tm.tm_mday = 11;        // 11 DoM
-    tm.tm_hour = 12;        // 12
-    tm.tm_min = 12;         // 12
-    tm.tm_sec = 12;         // 12
-    tm.tm_isdst = 0;
-    std::time_t t = std::mktime(&tm); 
-
     libaaa_pg_reset(ctx, 1, 2);
     EXPECT_EQ(libaaa_pg_attribute_begin(ctx, 5), LIBAAA_OK);
-    EXPECT_EQ(libaaa_pg_write_time(ctx, t), LIBAAA_OK);
+    EXPECT_EQ(libaaa_pg_write_time(ctx, 0x391A958C), LIBAAA_OK);
     EXPECT_EQ(libaaa_pg_finalize(ctx), 26);
     EXPECT_THAT(buffer, PacketCheck(expected, 26));
 }
