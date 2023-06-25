@@ -1,0 +1,30 @@
+name: unit-tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  
+jobs:
+  test_linux:
+    name: Unit Test (Linux)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      run: actions/checkout@v3
+    - name: Install python
+       uses: actions/setup-python@v4
+       with:
+         python-version: '3.11' 
+    - name: Install requirements
+      run: pip install -r ./libaaa/test/requirements.txt
+    - name: Build application
+      run: cd ./libaaa/test/ && python ./build.py
+    - name: Run Unittest
+      run: ./build/libaaa_test
+     
+ #  test_windows:
+ #    name: Unit Test (Linux)
+ #    needs: test_linux
+ 
