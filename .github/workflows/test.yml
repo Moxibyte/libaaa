@@ -1,4 +1,4 @@
-name: unit-tests
+name: Run unit tests
 
 on:
   push:
@@ -11,18 +11,21 @@ jobs:
     name: Unit Test (Linux)
     runs-on: ubuntu-latest
     steps:
-    #- name: Checkout
-    #  run: actions/checkout@v3
+    - name: Checkout
+      run: actions/checkout
     - name: Install python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11' 
     - name: Install requirements
-      run: pip install -r ./libaaa/test/requirements.txt
+      working-directory: $libaaa/test
+      run: pip install -r ./requirements.txt
     - name: Build application
-      run: cd ./libaaa/test/ && python ./build.py
+      working-directory: $/libaaa/test
+      run: python ./build.py
     - name: Run Unittest
-      run: ./build/libaaa_test
+      working-directory: $/libaaa/test/build
+      run: ./libaaa_test
      
  #  test_windows:
  #    name: Unit Test (Linux)
