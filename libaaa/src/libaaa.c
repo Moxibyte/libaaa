@@ -240,7 +240,7 @@ LIBAAA_API int libaaa_pg_finalize(libaaa_pg_context_t context)
     __libaaa_ats_finish(ctx);
 
     // Write packet length and return it
-    __libaaa_hton(&ctx->buffer_head, &ctx->buffer[__LIBAAA_PO_HEADER_LENGTH], 2);
+    __libaaa_hton((char*)&ctx->buffer_head, (char*)&ctx->buffer[__LIBAAA_PO_HEADER_LENGTH], 2);
     return ctx->buffer_head;
 }
 
@@ -364,7 +364,7 @@ LIBAAA_API int libaaa_pg_attribute_begin_extended_vendor_specific(libaaa_pg_cont
 LIBAAA_API int libaaa_pg_write_integer(libaaa_pg_context_t context, uint32_t value)
 {
     uint32_t swap;
-    __libaaa_hton(&value, &swap, sizeof(uint32_t));
+    __libaaa_hton((char*)&value, (char*)&swap, sizeof(uint32_t));
     return __libaaa_ats_write(context, &swap, sizeof(uint32_t));
 }
 
@@ -489,6 +489,64 @@ LIBAAA_API int libaaa_pg_write_ipv4prefix(libaaa_pg_context_t context, uint8_t p
 LIBAAA_API int libaaa_pg_write_integer64(libaaa_pg_context_t context, uint64_t value)
 {
     uint64_t swap;
-    __libaaa_hton(&value, &swap, sizeof(uint64_t));
+    __libaaa_hton((char*)&value, (char*)&swap, sizeof(uint64_t));
     return __libaaa_ats_write(context, &swap, sizeof(uint64_t));
 }
+
+LIBAAA_API int libaaa_pr_validate_packet(const void* input_buffer,  int input_size)
+{
+    // (1) Network size
+    if(input_size < 20 || input_size > LIBAAA_PACKET_MAX_SIZE)
+    {
+        return LIBAAA_PACKET_INVALID_LENGTH;
+    }
+
+    // (2) Packet size
+    uint16_t packet_size = 0;
+    __libaaa_ntoh(&((const char*)input_buffer)[__LIBAAA_PO_HEADER_LENGTH], (char*)&packet_size, sizeof(uint16_t));
+    if (packet_size > input_size)
+    {
+        return LIBAAA_PACKET_VALIDATION_FAILED;
+    }
+
+    // (3) Packet header
+    uint8_t radius_code = ((const char*)input_buffer)[__LIBAAA_PO_HEADER_CODE];
+    if (radius_code == 0 || (radius_code > 5 && radius_code < 11) || radius_code > 13)
+    {
+        return LIBAAA_PACKET_VALIDATION_FAILED;
+    }
+
+    // (4) Attributes 
+    uint64_t offset = 20;
+    while (offset < packet_size)
+    {
+        // THIS
+        const char* attribute = &((const char*)input_buffer)[offset];
+        uint8_t attribute_len = attribute[__LIBAAA_PO_ATTRIBUTE_LENGTH];
+        
+        // Attribute bounds
+        if (offset + attribute_len > packet_size)
+        {
+            return LIBAAA_PACKET_INVALID_BODY;
+        }
+        // Attribute size
+        if (attribute_len < 2)
+        {
+            return LIBAAA_PACKET_INVALID_BODY;
+        }
+
+        // NEXT
+        offset += attribute_len;
+    }
+
+    // Passed
+    return LIBAAA_OK;
+}
+
+LIBAAA_API void libaaa_pr_get_packet_details(const void* input_buffer, libaaa_radius_code_t* code, uint8_t* identifier, char* authenticator)
+{
+    *code = ((const char*)input_buffer)[__LIBAAA_PO_HEADER_CODE];
+    *identifier = ((const char*)input_buffer)[__LIBAAA_PO_HEADER_IDENTIFIER];
+    memcpy(authenticator, &((const char*)input_buffer)[__LIBAAA_PO_HEADER_AUTHENTICATOR], 16);
+}
+

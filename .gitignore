@@ -1,2 +1,6 @@
 # Python virtual env
 /venv
+
+# VSOutput
+**/.vs/**
+**/out/**

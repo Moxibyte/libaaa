@@ -22,7 +22,22 @@ nav:
   - About: "index.md"
   - LibAAA: 
     - About: "libaaa/index.md"
-    - Reference: "libaaa/reference.md"
+    - libaaa_pg:
+      - Reference: "libaaa/libaaa_pg/reference.md"
+      - User Guide: "libaaa/libaaa_pg/guide.md"
+      - Example: "libaaa/libaaa_pg/example.md"
+    - libaaa_pr:
+      - Reference: "libaaa/libaaa_pr/reference.md"
+      - User Guide: "libaaa/libaaa_pr/guide.md"
+      - Example: "libaaa/libaaa_pr/example.md"
+    - "libaaa::packet_generator":
+      - Reference: "libaaa/packet_generator/reference.md"
+      - User Guide: "libaaa/packet_generator/guide.md"
+      - Example: "libaaa/packet_generator/example.md"
+    - "libaaa::packet_reader":
+      - Reference: "libaaa/packet_reader/reference.md"
+      - User Guide: "libaaa/packet_reader/guide.md"
+      - Example: "libaaa/packet_reader/example.md"
   - LibAAA-Server: "libaaa-server/index.md"
   - LibAAA-Client: "libaaa-client/index.md"
 

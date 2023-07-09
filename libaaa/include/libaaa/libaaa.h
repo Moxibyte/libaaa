@@ -44,6 +44,9 @@
 //
 #define LIBAAA_OK 0
 #define LIBAAA_ERROR -1
+#define LIBAAA_PACKET_INVALID_LENGTH -2
+#define LIBAAA_PACKET_VALIDATION_FAILED -3
+#define LIBAAA_PACKET_INVALID_BODY -4
 
 #define LIBAAA_PACKET_MAX_SIZE 4096
 #define LIBAAA_PG_CONTEXT_SIZE 64
@@ -333,6 +336,38 @@ LIBAAA_API int libaaa_pg_write_integer64(libaaa_pg_context_t context, uint64_t v
 //
 // === API "pr" (Packet Reader) ===
 //
+
+/*!
+ * @brief Generic packet validation (before parsing it). This will NOT catch all possible issues!
+ * 
+ * - Validates input_size
+ * - Validates packet header (size)
+ * - Validates packet header values
+ * - Validates all packets attributes size (in attribute and across packet)
+ * @param input_buffer Received network packet data
+ * @param input_size Size of the packet
+ * @return status code
+ * - LIBAAA_OK: Packet validated successfully
+ * - LIBAAA_PACKET_INVALID_LENGTH: Packet does not contain a radius header / is invalid in it's length
+ * - LIBAAA_PACKET_VALIDATION_FAILED: Packet is not a valid radius packet
+ * - LIBAAA_PACKET_INVALID_BODY: Packet's body is not valid in itself or with the header
+*/
+LIBAAA_API int libaaa_pr_validate_packet(const void* input_buffer, int input_size);
+
+/*!
+ * @brief Retrieves non attribute detail from the packet. 
+ * 
+ * Only unse this function when the packet has been validated by the "libaaa_pr_validate_packet" function.
+ * This function can be called on the following return values from "libaaa_pr_validate_packet": 
+ * LIBAAA_OK, LIBAAA_PACKET_VALIDATION_FAILED, LIBAAA_PACKET_INVALID_BODY
+ * 
+ * @param input_buffer Input buffer to read header from
+ * @param code Output radius code
+ * @param identifier Output radius identifier
+ * @param authenticator Output radius authenticator (16-Bytes)
+ * @return 
+*/
+LIBAAA_API void libaaa_pr_get_packet_details(const void* input_buffer, libaaa_radius_code_t* code, uint8_t* identifier, char* authenticator);
 
 #ifdef __cplusplus
 }
